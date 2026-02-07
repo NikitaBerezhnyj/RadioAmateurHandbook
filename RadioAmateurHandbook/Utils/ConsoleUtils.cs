@@ -23,8 +23,13 @@ namespace RadioAmateurHandbook.Utils
 
         public static void PrintCentered(string text)
         {
-            int padding = (_width - text.Length) / 2;
-            Console.WriteLine($"{new string('-', padding)}{text}{new string('-', _width - text.Length - padding)}");
+            int contentLength = text.Length + 2;
+            int paddingLeft = (_width - contentLength) / 2;
+            int paddingRight = _width - contentLength - paddingLeft;
+
+            Console.WriteLine(
+                $"{new string('-', paddingLeft)} {text} {new string('-', paddingRight)}"
+            );
         }
 
         public static void ClearScreen()

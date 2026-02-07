@@ -76,7 +76,7 @@ namespace RadioAmateurHandbook.Radios
         public double GetFrequency() { return this.frequency; }
         public abstract void SetFrequency(double frequency);
 
-        public int GetIVolume() { return this.volume; }
+        public int GetVolume() { return this.volume; }
         public void SetVolume(int volume) {
             if (volume <= 0)
             {

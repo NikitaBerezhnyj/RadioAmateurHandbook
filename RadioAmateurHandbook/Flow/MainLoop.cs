@@ -41,7 +41,7 @@ namespace RadioAmateurHandbook.Flow
             var radio = _ctx.ActiveUser.GetActiveRadio();
 
             ConsoleUtils.ClearScreen();
-            MenuRenderer.Render(_ctx.ActiveUserRole, radio.GetName());
+            MenuRenderer.Render(_ctx.ActiveUser.GetUserRole(), radio.GetName());
             RadioInfoRenderer.Print(radio);
         }
 

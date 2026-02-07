@@ -21,7 +21,7 @@ namespace RadioAmateurHandbook.Data.DTO
             Name = radio.GetName();
             IsPoweredOn = radio.IsPoweredOn();
             Frequency = radio.GetFrequency();
-            Volume = radio.GetIVolume();
+            Volume = radio.GetVolume();
             InstalledFrequencies = radio.GetInstalledFrequency();
         }
     }

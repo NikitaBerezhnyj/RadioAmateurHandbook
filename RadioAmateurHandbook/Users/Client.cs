@@ -10,6 +10,6 @@ namespace RadioAmateurHandbook.Users
 {
     internal class Client : User
     {
-        public Client(RadioFM fm, RadioAM am) : base(fm, am) { }
+        public Client(RadioFM fm, RadioAM am) : base(fm, am, "Client") { }
     }
 }

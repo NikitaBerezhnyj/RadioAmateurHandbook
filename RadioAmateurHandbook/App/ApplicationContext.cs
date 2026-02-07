@@ -1,4 +1,5 @@
-﻿using RadioAmateurHandbook.Radios;
+﻿using RadioAmateurHandbook.Domain;
+using RadioAmateurHandbook.Radios;
 using RadioAmateurHandbook.Users;
 using System;
 using System.Collections.Generic;
@@ -12,51 +13,37 @@ namespace RadioAmateurHandbook.App
     {
         public RadioFM FmRadio { get; }
         public RadioAM AmRadio { get; }
-
         public User ActiveUser { get; set; }
-        public string ActiveUserRole { get; set; }
 
-        public Client Client { get; }
-        public Admin Admin { get; }
-        public Manager Manager { get; }
-        public Director Director { get; }
+        private readonly Client _client;
+        private readonly Admin _admin;
+        private readonly Manager _manager;
+        private readonly Director _director;
 
         public ApplicationContext()
         {
             FmRadio = new RadioFM();
             AmRadio = new RadioAM();
 
-            Client = new Client(FmRadio, AmRadio);
-            Admin = new Admin(FmRadio, AmRadio);
-            Manager = new Manager(FmRadio, AmRadio);
-            Director = new Director(FmRadio, AmRadio);
+            _client = new Client(FmRadio, AmRadio);
+            _admin = new Admin(FmRadio, AmRadio);
+            _manager = new Manager(FmRadio, AmRadio);
+            _director = new Director(FmRadio, AmRadio);
 
-            ActiveUser = Client;
-            ActiveUserRole = "Client";
+            ActiveUser = _client;
         }
 
         public void ChangeUser(int roleNum)
         {
-            string currentRadioType = ActiveUser.GetActiveRadioType();
-
+            RadioType currentRadioType = ActiveUser.GetActiveRadioType();
             ActiveUser = roleNum switch
             {
-                0 => Client,
-                1 => Admin,
-                2 => Manager,
-                3 => Director,
+                0 => _client,
+                1 => _admin,
+                2 => _manager,
+                3 => _director,
                 _ => ActiveUser
             };
-
-            ActiveUserRole = roleNum switch
-            {
-                0 => "Client",
-                1 => "Admin",
-                2 => "Manager",
-                3 => "Director",
-                _ => ActiveUserRole
-            };
-
             RestoreRadio(currentRadioType);
         }
 
@@ -68,9 +55,9 @@ namespace RadioAmateurHandbook.App
                 ActiveUser.SelectAM();
         }
 
-        private void RestoreRadio(string radioType)
+        private void RestoreRadio(RadioType radioType)
         {
-            if (radioType == "AM")
+            if (radioType == RadioType.AM)
                 ActiveUser.SelectAM();
             else
                 ActiveUser.SelectFM();

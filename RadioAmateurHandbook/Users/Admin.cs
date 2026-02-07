@@ -10,7 +10,7 @@ namespace RadioAmateurHandbook.Users
 {
     internal class Admin : User
     {
-        public Admin(RadioFM fm, RadioAM am) : base(fm, am) { }
+        public Admin(RadioFM fm, RadioAM am): base(fm, am, "Admin") { }
 
         public override bool CanSetVolume() { return false; }
 

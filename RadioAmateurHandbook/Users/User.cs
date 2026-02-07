@@ -1,4 +1,5 @@
-﻿using RadioAmateurHandbook.Exceptions;
+﻿using RadioAmateurHandbook.Domain;
+using RadioAmateurHandbook.Exceptions;
 using RadioAmateurHandbook.Radios;
 using RadioAmateurHandbook.Utils;
 
@@ -10,13 +11,19 @@ namespace RadioAmateurHandbook.Users
         private RadioAM amRadio;
         private Radio activeRadio;
 
-        public User(RadioFM fm, RadioAM am)
+        protected readonly string role;
+
+        public User(RadioFM fm, RadioAM am, string role)
         {
+            this.role = role;
+
             this.fmRadio = fm;
             this.amRadio = am;
 
             this.activeRadio = fmRadio;
         }
+
+        public string GetUserRole() { return this.role; }
 
         public Radio GetActiveRadio() => activeRadio;
         public void SelectFM() => activeRadio = fmRadio;
@@ -57,7 +64,7 @@ namespace RadioAmateurHandbook.Users
             activeRadio.SetFrequency(frequency);
         }
 
-        public int GetVolume() { return activeRadio.GetIVolume(); }
+        public int GetVolume() { return activeRadio.GetVolume(); }
         public void SetVolume(int volume)
         {
             if (!CanSetVolume())
@@ -84,6 +91,6 @@ namespace RadioAmateurHandbook.Users
             activeRadio.SaveFrequency(index, newFrequency);
         }
 
-        public string GetActiveRadioType() { return activeRadio == fmRadio ? "FM" : "AM"; }
+        public RadioType GetActiveRadioType() { return activeRadio == fmRadio ? RadioType.FM : RadioType.AM; }
     }
 }

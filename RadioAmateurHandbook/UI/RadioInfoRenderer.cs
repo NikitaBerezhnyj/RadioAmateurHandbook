@@ -18,7 +18,7 @@ namespace RadioAmateurHandbook.UI
             ConsoleUtils.PrintLine();
 
             Console.WriteLine($"Power: {(radio.IsPoweredOn() ? "On" : "Off")}");
-            Console.WriteLine($"Volume: {radio.GetIVolume()} Db");
+            Console.WriteLine($"Volume: {radio.GetVolume()} Db");
             Console.WriteLine($"Frequency: {radio.GetFrequency():0.00}");
 
             var freqs = radio.GetInstalledFrequency();

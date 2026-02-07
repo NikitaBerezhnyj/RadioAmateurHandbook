@@ -12,6 +12,8 @@ namespace RadioAmateurHandbook.Actions
 {
     internal class RadioActions
     {
+        private const int MaxSavedFrequencies = 5;
+
         public static bool TurnOff(ApplicationContext ctx)
         {
             if (!ctx.ActiveUser.CanTurnOff())
@@ -81,7 +83,7 @@ namespace RadioAmateurHandbook.Actions
                 throw new UserInputException("Invalid frequency value.");
 
             int index = InputUtils.GetNumber("Enter index [1-5]: ");
-            if (index < 1 || index > 5)
+            if (index < 1 || index > MaxSavedFrequencies)
                 throw new UserInputException("Index must be between 1 and 5.");
 
             ctx.ActiveUser.SaveFrequency(index - 1, frequency);
@@ -97,7 +99,7 @@ namespace RadioAmateurHandbook.Actions
             }
 
             int index = InputUtils.GetNumber("Enter index [1-5]: ");
-            if (index < 1 || index > 5)
+            if (index < 1 || index > MaxSavedFrequencies)
                 throw new UserInputException("Index must be between 1 and 5.");
 
             ctx.ActiveUser.LoadFrequency(index);
@@ -120,7 +122,7 @@ namespace RadioAmateurHandbook.Actions
         private static void NoPermission(ApplicationContext ctx)
         {
             MessageUtils.WarningMessage(
-                $"{ctx.ActiveUserRole} has no permission to perform this action."
+                $"{ctx.ActiveUser.GetUserRole()} has no permission to perform this action."
             );
             ConsoleUtils.WaitForEnter();
         }

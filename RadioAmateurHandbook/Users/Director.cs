@@ -10,7 +10,7 @@ namespace RadioAmateurHandbook.Users
 {
     internal class Director: User
     {
-        public Director(RadioFM fm, RadioAM am) : base(fm, am) { }
+        public Director(RadioFM fm, RadioAM am) : base(fm, am, "Director") { }
 
         public override bool CanTurnOn() { return false; }
 
