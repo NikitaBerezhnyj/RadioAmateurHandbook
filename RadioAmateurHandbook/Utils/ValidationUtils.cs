@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace RadioAmateurHandbook.Utils
 {
@@ -24,7 +19,9 @@ namespace RadioAmateurHandbook.Utils
             value = 0;
 
             if (string.IsNullOrWhiteSpace(input))
+            {
                 return false;
+            }
 
             input = input.Trim().Replace(',', '.');
 

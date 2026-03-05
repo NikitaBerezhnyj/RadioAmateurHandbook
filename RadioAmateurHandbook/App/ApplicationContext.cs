@@ -1,66 +1,49 @@
 ﻿using RadioAmateurHandbook.Domain;
 using RadioAmateurHandbook.Radios;
 using RadioAmateurHandbook.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RadioAmateurHandbook.App
 {
     internal class ApplicationContext
     {
-        public RadioFM FmRadio { get; }
-        public RadioAM AmRadio { get; }
-        public User ActiveUser { get; set; }
+        public RadioFM FmRadio { get; private set; }
+        public RadioAM AmRadio { get; private set; }
+        public Radio ActiveRadio { get; private set; }
+        public User ActiveUser { get; private set; }
 
-        private readonly Client _client;
-        private readonly Admin _admin;
-        private readonly Manager _manager;
-        private readonly Director _director;
+        private readonly User[] _users;
 
         public ApplicationContext()
         {
             FmRadio = new RadioFM();
             AmRadio = new RadioAM();
+            ActiveRadio = FmRadio;
 
-            _client = new Client(FmRadio, AmRadio);
-            _admin = new Admin(FmRadio, AmRadio);
-            _manager = new Manager(FmRadio, AmRadio);
-            _director = new Director(FmRadio, AmRadio);
-
-            ActiveUser = _client;
+            _users = [new Client(), new Admin(), new Manager(), new Director()];
+            ActiveUser = _users[0];
         }
 
         public void ChangeUser(int roleNum)
         {
-            RadioType currentRadioType = ActiveUser.GetActiveRadioType();
-            ActiveUser = roleNum switch
+            var currentType = ActiveRadio == FmRadio ? RadioType.FM : RadioType.AM;
+
+            if (roleNum >= 0 && roleNum < _users.Length)
             {
-                0 => _client,
-                1 => _admin,
-                2 => _manager,
-                3 => _director,
-                _ => ActiveUser
-            };
-            RestoreRadio(currentRadioType);
+                ActiveUser = _users[roleNum];
+            }
         }
 
         public void ChangeRadio(int radioNum)
         {
-            if (radioNum == 0)
-                ActiveUser.SelectFM();
-            else
-                ActiveUser.SelectAM();
+            ActiveRadio = radioNum == 0 ? FmRadio : AmRadio;
         }
 
-        private void RestoreRadio(RadioType radioType)
+        public void SetRadios(RadioFM fm, RadioAM am)
         {
-            if (radioType == RadioType.AM)
-                ActiveUser.SelectAM();
-            else
-                ActiveUser.SelectFM();
+            FmRadio = fm;
+            AmRadio = am;
+
+            ActiveRadio = fm;
         }
     }
 }

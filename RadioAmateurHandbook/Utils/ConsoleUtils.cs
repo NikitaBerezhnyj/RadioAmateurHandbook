@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RadioAmateurHandbook.Utils
+﻿namespace RadioAmateurHandbook.Utils
 {
     internal static class ConsoleUtils
     {
@@ -27,9 +21,7 @@ namespace RadioAmateurHandbook.Utils
             int paddingLeft = (_width - contentLength) / 2;
             int paddingRight = _width - contentLength - paddingLeft;
 
-            Console.WriteLine(
-                $"{new string('-', paddingLeft)} {text} {new string('-', paddingRight)}"
-            );
+            Console.WriteLine($"{new string('-', paddingLeft)} {text} {new string('-', paddingRight)}");
         }
 
         public static void ClearScreen()

@@ -4,21 +4,18 @@ using RadioAmateurHandbook.Data;
 using RadioAmateurHandbook.Exceptions;
 using RadioAmateurHandbook.UI;
 using RadioAmateurHandbook.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RadioAmateurHandbook.Flow
 {
     internal class MainLoop
     {
         private readonly ApplicationContext _ctx;
+        private readonly RadioPersistenceService _persistence;
 
-        public MainLoop(ApplicationContext ctx)
+        public MainLoop(ApplicationContext ctx, RadioPersistenceService persistence)
         {
             _ctx = ctx;
+            _persistence = persistence;
         }
 
         public void Run()
@@ -32,16 +29,16 @@ namespace RadioAmateurHandbook.Flow
 
                 isRunning = HandleChoice(choice);
 
-                DataManager.SaveData(_ctx.FmRadio, _ctx.AmRadio);
+                _persistence.TrySave(_ctx.FmRadio, _ctx.AmRadio);
             }
         }
 
         private void Render()
         {
-            var radio = _ctx.ActiveUser.GetActiveRadio();
+            var radio = _ctx.ActiveRadio;
 
             ConsoleUtils.ClearScreen();
-            MenuRenderer.Render(_ctx.ActiveUser.GetUserRole(), radio.GetName());
+            MenuRenderer.Render(_ctx.ActiveUser.Role, radio.Name);
             RadioInfoRenderer.Print(radio);
         }
 
@@ -50,8 +47,11 @@ namespace RadioAmateurHandbook.Flow
             while (true)
             {
                 int choice = InputUtils.GetNumber("Enter task code: ");
+
                 if (choice != -1)
+                {
                     return choice;
+                }
 
                 MessageUtils.WarningMessage("Invalid input.");
                 ConsoleUtils.WaitForEnter();

@@ -1,9 +1,4 @@
 ﻿using RadioAmateurHandbook.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RadioAmateurHandbook.Radios
 {
@@ -14,19 +9,29 @@ namespace RadioAmateurHandbook.Radios
 
         public RadioAM() : base()
         {
-            this.name = "AM Radio";
-            this.frequency = _minFrequencyLimit;
+            Name = "AM Radio";
+            Frequency = _minFrequencyLimit;
         }
+
         public RadioAM(string name) : base(name)
         {
-            this.frequency = _minFrequencyLimit;
+            Frequency = _minFrequencyLimit;
         }
-        public RadioAM(string name,bool isPoweredOn, double frequency, int volume, double[] installedFrequency)
-        : base(name, isPoweredOn, frequency, volume, installedFrequency)
+
+        public RadioAM(string name, bool isPoweredOn, double frequency, int volume, double[] installedFrequency)
+            : base(name, isPoweredOn, frequency, volume, installedFrequency)
         {
-            if (frequency < _minFrequencyLimit) this.frequency = _minFrequencyLimit;
-            if (frequency > _maxFrequencyLimit) this.frequency = _maxFrequencyLimit;
+            if (frequency < _minFrequencyLimit)
+            {
+                Frequency = _minFrequencyLimit;
+            }
+
+            if (frequency > _maxFrequencyLimit)
+            {
+                Frequency = _maxFrequencyLimit;
+            }
         }
+
         public RadioAM(RadioAM other) : base(other)
         {
             this._minFrequencyLimit = other._minFrequencyLimit;
@@ -36,14 +41,14 @@ namespace RadioAmateurHandbook.Radios
         public override void Reset()
         {
             base.Reset();
-            frequency = _minFrequencyLimit;
+            Frequency = _minFrequencyLimit;
         }
 
         public override void SetFrequency(double frequency)
         {
             if (frequency >= _minFrequencyLimit && frequency <= _maxFrequencyLimit)
             {
-                this.frequency = frequency;
+                Frequency = frequency;
             }
             else
             {

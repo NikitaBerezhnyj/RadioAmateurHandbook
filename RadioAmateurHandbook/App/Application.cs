@@ -1,9 +1,5 @@
-﻿using RadioAmateurHandbook.Flow;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RadioAmateurHandbook.Data;
+using RadioAmateurHandbook.Flow;
 
 namespace RadioAmateurHandbook.App
 {
@@ -15,9 +11,12 @@ namespace RadioAmateurHandbook.App
 
         public Application()
         {
+            var repo = new RadioRepository();
+            var persistence = new RadioPersistenceService(repo);
+
             _ctx = new ApplicationContext();
-            _startup = new StartupFlow(_ctx);
-            _mainLoop = new MainLoop(_ctx);
+            _startup = new StartupFlow(_ctx, persistence);
+            _mainLoop = new MainLoop(_ctx, persistence);
         }
 
         public void Run()

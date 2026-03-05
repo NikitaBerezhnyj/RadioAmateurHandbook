@@ -1,5 +1,4 @@
-﻿using RadioAmateurHandbook;
-using RadioAmateurHandbook.App;
+﻿using RadioAmateurHandbook.App;
 
 class Program
 {

@@ -2,21 +2,18 @@
 using RadioAmateurHandbook.Data;
 using RadioAmateurHandbook.Exceptions;
 using RadioAmateurHandbook.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RadioAmateurHandbook.Flow
 {
     internal class StartupFlow
     {
         private readonly ApplicationContext _ctx;
+        private readonly RadioPersistenceService _persistence;
 
-        public StartupFlow(ApplicationContext ctx)
+        public StartupFlow(ApplicationContext ctx, RadioPersistenceService persistence)
         {
             _ctx = ctx;
+            _persistence = persistence;
         }
 
         public void Run()
@@ -28,24 +25,37 @@ namespace RadioAmateurHandbook.Flow
 
         private void LoadData()
         {
-            var filename = DataManager.GetFilename();
+            _persistence.EnsureCreated();
 
-            if (!File.Exists(filename))
+            if (!_persistence.HasSavedData())
             {
-                DataManager.CreateData();
                 return;
             }
 
             while (true)
             {
                 char choice = InputUtils.GetChar("Do you want to load radio state from saves? [y - Yes; n - No]: ");
+
                 if (choice == 'y')
                 {
-                    if (!DataManager.LoadData(_ctx.FmRadio, _ctx.AmRadio))
+                    var data = _persistence.TryLoad();
+
+                    if (data != null)
+                    {
+                        _ctx.SetRadios(data.Value.fm, data.Value.am);
+                    }
+                    else
+                    {
                         MessageUtils.WarningMessage("Failed to load data.");
+                    }
+
                     break;
                 }
-                if (choice == 'n') break;
+
+                if (choice == 'n')
+                {
+                    break;
+                }
 
                 MessageUtils.WarningMessage("Invalid input.");
                 ConsoleUtils.WaitForEnter();
@@ -58,12 +68,12 @@ namespace RadioAmateurHandbook.Flow
             {
                 try
                 {
-                    int radioNum = InputUtils.GetNumber(
-                        $"Select radio [0] {_ctx.FmRadio.GetName()} [1] {_ctx.AmRadio.GetName()}: "
-                    );
+                    int radioNum = InputUtils.GetNumber($"Select radio [0] {_ctx.FmRadio.Name} [1] {_ctx.AmRadio.Name}: ");
 
                     if (radioNum != 0 && radioNum != 1)
+                    {
                         throw new UserInputException("Invalid radio selection.");
+                    }
 
                     _ctx.ChangeRadio(radioNum);
                     return;

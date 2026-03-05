@@ -1,124 +1,111 @@
-﻿using RadioAmateurHandbook.Data.DTO;
-using RadioAmateurHandbook.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RadioAmateurHandbook.Radios
+﻿namespace RadioAmateurHandbook.Radios
 {
     internal abstract class Radio
     {
-        private int _maxVolume = 120;
+        private static int _maxVolume = 120;
+        private static int _maxFrequencySlots = 5;
 
-        protected string name;
-        protected bool isPoweredOn;
-        protected double frequency;
-        protected int volume;
-        protected double[] installedFrequency = new double[5];
+        public string Name { get; protected set; }
+        public bool IsPoweredOn { get; protected set; }
+        public double Frequency { get; protected set; }
+        public int Volume { get; protected set; }
+        public double[] InstalledFrequency { get; protected set; } = new double[_maxFrequencySlots];
 
-        public Radio() {
-            this.name = "Radio";
-            this.isPoweredOn = false;
-            this.frequency = 100.0;
-            this.volume = 10;
-			for (int i = 0; i < installedFrequency.Length; i++)
-				installedFrequency[i] = 0;
-		}
+        public Radio()
+        {
+            Name = "Radio";
+            IsPoweredOn = false;
+            Frequency = 100.0;
+            Volume = 10;
+            for (int i = 0; i < InstalledFrequency.Length; i++)
+            {
+                InstalledFrequency[i] = 0;
+            }
+        }
         public Radio(string name)
         {
-            this.name = name;
-            this.isPoweredOn = false;
-            this.frequency = 100.0;
-            this.volume = 10;
-            this.installedFrequency = [];
+            Name = name;
+            IsPoweredOn = false;
+            Frequency = 100.0;
+            Volume = 10;
+            InstalledFrequency = new double[_maxFrequencySlots];
         }
-        public Radio(string name, bool isPoweredOn, double frequency, int volume, double[] installedFrequency) {
-            this.name = name;
-            this.isPoweredOn = isPoweredOn;
-            this.frequency = frequency;
-            this.volume = volume;
-            this.installedFrequency = installedFrequency;
-        }
-        public Radio(Radio other) {
-            this.name = other.name;
-            this.isPoweredOn = other.isPoweredOn;
-            this.frequency = other.frequency;
-            this.volume = other.volume;
-            this.installedFrequency = other.installedFrequency;
-        }
-
-		public virtual void Reset()
-		{
-			isPoweredOn = false;
-			volume = 10;
-			frequency = 100.0;
-			for (int i = 0; i < installedFrequency.Length; i++)
-				installedFrequency[i] = 0;
-		}
-
-		public void Load(RadioDTO dto)
+        public Radio(string name, bool isPoweredOn, double frequency, int volume, double[] installedFrequency)
         {
-            this.name = dto.Name;
-            this.isPoweredOn = dto.IsPoweredOn;
-            this.frequency = dto.Frequency;
-            this.volume = dto.Volume;
-            this.installedFrequency = dto.InstalledFrequencies;
+            Name = name;
+            IsPoweredOn = isPoweredOn;
+            Frequency = frequency;
+            Volume = volume;
+            InstalledFrequency = installedFrequency;
+        }
+        public Radio(Radio other)
+        {
+            Name = other.Name;
+            IsPoweredOn = other.IsPoweredOn;
+            Frequency = other.Frequency;
+            Volume = other.Volume;
+            InstalledFrequency = other.InstalledFrequency;
         }
 
-        public string GetName() { return name; }
+        public virtual void Reset()
+        {
+            IsPoweredOn = false;
+            Volume = 10;
+            Frequency = 100.0;
+            for (int i = 0; i < InstalledFrequency.Length; i++)
+            {
+                InstalledFrequency[i] = 0;
+            }
+        }
 
-        public void TurnOn() { this.isPoweredOn = true; }
-        public void TurnOff() { this.isPoweredOn = false;  }
-        public bool IsPoweredOn() { return this.isPoweredOn; }
+        public void TurnOn()
+        {
+            IsPoweredOn = true;
+        }
+        public void TurnOff()
+        {
+            IsPoweredOn = false;
+        }
 
-        public double GetFrequency() { return this.frequency; }
         public abstract void SetFrequency(double frequency);
 
-        public int GetVolume() { return this.volume; }
-        public void SetVolume(int volume) {
-            if (volume <= 0)
+        public void SetVolume(int volume)
+        {
+            if (volume < 0)
             {
-                volume = 0;
-            }
-            else if (volume > _maxVolume)
-            {
-                MessageUtils.PanicMessage("Error: Volume is higher than maximum");
-                ConsoleUtils.WaitForEnter();
-                return;
+                Volume = 0;
+                throw new ArgumentOutOfRangeException(nameof(volume), "Volume cannot be negative.");
             }
 
-            this.volume = volume;
+            if (volume > _maxVolume)
+            {
+                throw new ArgumentOutOfRangeException(nameof(volume), $"Volume cannot exceed {_maxVolume}.");
+            }
+
+            Volume = volume;
         }
 
-        public double[] GetInstalledFrequency() { return this.installedFrequency; }
-        public void SaveFrequency(int index, double newFrequency) {
-            if (index >= 0 && index < this.installedFrequency.Length)
+        public void SaveFrequency(int index, double newFrequency)
+        {
+            if (index < 0 || index >= InstalledFrequency.Length)
             {
-                this.installedFrequency[index] = newFrequency;
-            }
-            else
-            {
-                MessageUtils.PanicMessage("Error: Invalid index");
-                ConsoleUtils.WaitForEnter();
-                return;
-            }
-        }
-        public void LoadFrequency(int index) {
-            if (index < 1 || index > this.installedFrequency.Length)
-            {
-                MessageUtils.PanicMessage("Error: Invalid index");
-                ConsoleUtils.WaitForEnter();
-                return;
+                throw new ArgumentOutOfRangeException(nameof(index), $"Index must be between 1 and {_maxFrequencySlots}.");
             }
 
-            double value = this.installedFrequency[index - 1];
+            InstalledFrequency[index] = newFrequency;
+        }
+        public void LoadFrequency(int index)
+        {
+            if (index < 1 || index > InstalledFrequency.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"Index must be between 1 and {_maxFrequencySlots}.");
+            }
+
+            double value = InstalledFrequency[index - 1];
+
             if (value == 0)
             {
-                MessageUtils.PanicMessage("Error: Value by index is empty");
-                ConsoleUtils.WaitForEnter();
-                return;
+                throw new InvalidOperationException("Value by index is empty.");
             }
 
             SetFrequency(value);
